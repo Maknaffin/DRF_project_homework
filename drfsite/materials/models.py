@@ -1,5 +1,14 @@
+from django.conf import settings
 from django.db import models
-from users.models import NULLABLE
+from users.models import NULLABLE, User
+
+PAY_CARD = 'card'
+PAY_CASH = 'cash'
+
+PAY_TYPES = (
+    (PAY_CASH, 'наличные'),
+    (PAY_CARD, 'перевод')
+)
 
 
 class Course(models.Model):
@@ -20,7 +29,8 @@ class Lesson(models.Model):
     descriptions = models.TextField(**NULLABLE, verbose_name='Описание')
     preview = models.ImageField(upload_to='course/', **NULLABLE, verbose_name='Изображение')
     link_to_video = models.URLField(verbose_name='Ссылка на видео', **NULLABLE)
-    course = models.ForeignKey(Course, verbose_name='Курс', on_delete=models.CASCADE, **NULLABLE, related_name="lessons")
+    course = models.ForeignKey(Course, verbose_name='Курс', on_delete=models.CASCADE, **NULLABLE,
+                               related_name="lessons")
 
     def __str__(self):
         return f'{self.title} ({self.course})'
@@ -28,3 +38,20 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
+
+
+class Payments(models.Model):
+    user = models.ForeignKey(User, verbose_name='Пользователь',
+                             on_delete=models.CASCADE, **NULLABLE)
+    date_of_payment = models.DateField(verbose_name="Дата оплаты")
+    paid_course = models.ForeignKey(Course, verbose_name='Оплаченный курс', on_delete=models.CASCADE, **NULLABLE)
+    paid_lesson = models.ForeignKey(Lesson, verbose_name='Оплаченный урок', on_delete=models.CASCADE, **NULLABLE)
+    payment_sum = models.IntegerField(verbose_name='Сумма оплаты')
+    payment_method = models.CharField(choices=PAY_TYPES, default=PAY_CASH, max_length=10, verbose_name='способ оплаты')
+
+    def __str__(self):
+        return f'{self.user} - {self.date_of_payment}'
+
+    class Meta:
+        verbose_name = 'платеж'
+        verbose_name_plural = 'платежи'
