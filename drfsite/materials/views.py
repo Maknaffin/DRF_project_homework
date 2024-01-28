@@ -15,14 +15,14 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     permission_classes = [IsAuthenticated | IsModerator]
 
-    # def get_permissions(self):
-    #     if self.action == 'create' or self.action == 'list':
-    #         permission_classes = [IsAuthenticated]
-    #     elif self.action == 'retrieve' or self.action == 'update':
-    #         permission_classes = [IsModerator, IsOwner]
-    #     elif self.action == 'destroy':
-    #         permission_classes = [IsOwner]
-    #     return [permission() for permission in permission_classes]
+    def get_permissions(self):
+        if self.action == 'create' or self.action == 'list':
+            permission_classes = [IsAuthenticated]
+        elif self.action == 'retrieve' or self.action == 'update':
+            permission_classes = [IsModerator | IsOwner]
+        elif self.action == 'destroy':
+            permission_classes = [IsOwner]
+        return [permission() for permission in permission_classes]
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
