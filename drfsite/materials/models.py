@@ -12,7 +12,7 @@ PAY_TYPES = (
 
 
 class Course(models.Model):
-    title = models.CharField(max_length=250, verbose_name='Название курса')
+    title = models.CharField(max_length=250, **NULLABLE, verbose_name='Название курса')
     preview = models.ImageField(upload_to='course/', **NULLABLE, verbose_name='Изображение')
     descriptions = models.TextField(**NULLABLE, verbose_name='Описание')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE)
@@ -26,7 +26,7 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    title = models.CharField(max_length=250, verbose_name='Название урока')
+    title = models.CharField(max_length=250, **NULLABLE, verbose_name='Название урока')
     descriptions = models.TextField(**NULLABLE, verbose_name='Описание')
     preview = models.ImageField(upload_to='course/', **NULLABLE, verbose_name='Изображение')
     link_to_video = models.URLField(verbose_name='Ссылка на видео', **NULLABLE)
