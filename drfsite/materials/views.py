@@ -13,16 +13,28 @@ from materials.serializers import CourseSerializer, LessonSerializer, PaymentsSe
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    permission_classes = [IsAuthenticated | IsModerator]
+    permission_classes = [IsAuthenticated]
 
-    def get_permissions(self):
-        if self.action == 'create' or self.action == 'list':
-            permission_classes = [IsAuthenticated]
-        elif self.action == 'retrieve' or self.action == 'update':
-            permission_classes = [IsModerator | IsOwner]
-        elif self.action == 'destroy':
-            permission_classes = [IsOwner]
-        return [permission() for permission in permission_classes]
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Course.objects.all()
+        elif not self.request.user.is_staff:
+            return Course.objects.filter(owner=self.request.user)
+        else:
+            raise PermissionDenied
+
+    def create(self, request, *args, **kwargs):
+        if request.user.groups.filter(name='moderator'):
+            raise PermissionDenied
+        return super().create(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if request.user.groups.filter(name='moderator'):
+            raise PermissionDenied
+        return super().destroy(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
