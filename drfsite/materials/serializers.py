@@ -3,7 +3,7 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 
 from materials.models import Course, Lesson, Payments, Subscription
-from materials.validators import URLValidator
+# from materials.validators import URLValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = '__all__'
-        validators = [URLValidator(field='link_to_video')]
+        # validators = [URLValidator(field='link_to_video')]
 
 
 class CourseSerializer(serializers.ModelSerializer):
