@@ -3,6 +3,8 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.relations import SlugRelatedField
 
 from materials.models import Course, Lesson, Payments, Subscription
+
+
 # from materials.validators import URLValidator
 
 
@@ -35,7 +37,6 @@ class PaymentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payments
         fields = '__all__'
-
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
